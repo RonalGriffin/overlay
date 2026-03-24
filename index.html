@@ -5,53 +5,55 @@
 <title>Overlay Tasks PRO</title>
 
 <style>
-body {
+
+/* TAMAÑO REAL DEL OVERLAY (CLAVE PARA NO PIXELAR) */
+html, body {
+  width: 1080px;
+  height: 1920px;
   margin: 0;
   background: transparent;
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
-/* WRAPPER */
-#wrapper {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
+/* CONTENEDOR */
+#app {
+  width: 900px;
+  position: absolute;
+  top: 350px;
+  left: 50px;
 }
 
-/* APP RESPONSIVE (SIN SCALE = NO PIXELADO) */
-#app {
-  width: 700px;   /* 👈 GRANDE (clave) */
-  position: absolute;
-  top: 350px;     /* ajusta vertical */
-  right: 40px;     /* pegado a la izquierda */
-}
 /* BOTÓN OCULTO */
 #modoBtn {
   opacity: 0;
   transition: opacity 0.3s ease;
   position: absolute;
-  top: -40px;
+  top: -50px;
   left: 0;
-  background: #000;
-  color: #fff;
+  background: black;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
 }
 
-#wrapper:hover #modoBtn {
+body:hover #modoBtn {
   opacity: 1;
 }
 
 /* CONFIG */
 #setup {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 /* BOTONES */
 button {
   background: #ffd000;
   border: none;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 14px;
   cursor: pointer;
   font-weight: bold;
   margin: 5px 5px 0 0;
@@ -60,41 +62,40 @@ button {
 /* INPUT */
 input {
   width: 100%;
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 10px;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
+  font-size: 18px;
 }
 
 /* TAREAS */
 .task {
   background: #ffd000;
-  margin-top: 10px;
-  padding: 14px;
-  border-radius: 18px;
+  margin-top: 15px;
+  padding: 20px;
+  border-radius: 22px;
   display: flex;
   align-items: center;
-  gap: 10px;
   font-weight: bold;
+  font-size: 28px;
   color: white;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   transition: all 0.4s ease;
 }
 
-/* ICONO CON TU IMAGEN */
+/* ICONO IMAGEN */
 .task::before {
   content: "";
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
 
   background-image: url("estrella.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-
-  display: inline-block;
 }
 
 /* ESCALONADO */
@@ -105,52 +106,51 @@ input {
 
 .task.level-1 {
   opacity: 0.7;
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .task.level-2 {
   opacity: 0.5;
-  transform: scale(0.9);
+  transform: scale(0.85);
 }
 
 /* COMPLETAR */
 .task.done {
   opacity: 0;
-  transform: translateX(150px) scale(0.9);
+  transform: translateX(200px);
 }
 
-/* ANIMACIÓN SUBIDA */
+/* SUBIDA */
 .task.move-up {
-  transform: translateY(-25px);
+  transform: translateY(-40px);
 }
 
 /* OCULTO */
 .hidden {
   display: none;
 }
+
 </style>
 </head>
 
 <body>
 
-<div id="wrapper">
-  <div id="app">
+<div id="app">
 
-    <button id="modoBtn" onclick="toggleModo()">Modo Overlay</button>
+  <button id="modoBtn" onclick="toggleModo()">Modo Overlay</button>
 
-    <div id="setup">
-      <div>
-        <button onclick="crearInputs(1)">1</button>
-        <button onclick="crearInputs(2)">2</button>
-        <button onclick="crearInputs(3)">3</button>
-      </div>
-
-      <div id="inputs"></div>
+  <div id="setup">
+    <div>
+      <button onclick="crearInputs(1)">1</button>
+      <button onclick="crearInputs(2)">2</button>
+      <button onclick="crearInputs(3)">3</button>
     </div>
 
-    <div id="tasks"></div>
-
+    <div id="inputs"></div>
   </div>
+
+  <div id="tasks"></div>
+
 </div>
 
 <script>
