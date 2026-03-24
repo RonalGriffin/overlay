@@ -19,13 +19,13 @@ body {
   position: relative;
 }
 
-/* APP BASE */
+/* APP RESPONSIVE (SIN SCALE = NO PIXELADO) */
 #app {
-  width: 400px;
+  width: 25vw;
+  max-width: 400px;
   position: absolute;
   top: 10%;
   left: 5%;
-  transform-origin: top left;
 }
 
 /* BOTÓN OCULTO */
@@ -68,7 +68,7 @@ input {
   border: none;
 }
 
-/* TAREAS BASE */
+/* TAREAS */
 .task {
   background: #ffd000;
   margin-top: 10px;
@@ -84,10 +84,19 @@ input {
   transition: all 0.4s ease;
 }
 
-/* ICONO ESTRELLA */
+/* ICONO CON TU IMAGEN */
 .task::before {
-  content: "⭐";
-  margin-right: 8px;
+  content: "";
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+
+  background-image: url("estrella.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  display: inline-block;
 }
 
 /* ESCALONADO */
@@ -233,18 +242,6 @@ function animarSubida() {
     setTimeout(() => el.classList.remove("move-up"), 300);
   });
 }
-
-/* RESPONSIVE */
-function escalar() {
-  const baseWidth = 400;
-  const scale = window.innerWidth / baseWidth;
-
-  const app = document.getElementById("app");
-  app.style.transform = `scale(${scale})`;
-}
-
-window.addEventListener("resize", escalar);
-window.addEventListener("load", escalar);
 
 </script>
 
