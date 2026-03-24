@@ -5,6 +5,8 @@
 <title>Overlay Tasks PRO</title>
 
 <style>
+
+/* BASE */
 html, body {
   width: 1080px;
   height: 1920px;
@@ -14,6 +16,7 @@ html, body {
   overflow: hidden;
 }
 
+/* CONTENEDOR */
 #app {
   width: 100%;
   position: absolute;
@@ -24,35 +27,27 @@ html, body {
   align-items: center;
 }
 
-#modoBtn {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  position: absolute;
-  top: -70px;
-  background: black;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  font-size: 22px;
-}
-
-body:hover #modoBtn {
-  opacity: 1;
-}
-
+/* PANEL EDICIÓN (oculto por defecto) */
 #setup {
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  margin-bottom: 20px;
 }
 
+/* SOLO aparece con mouse real */
+@media (hover: hover) {
+  body:hover #setup {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* BOTONES */
 button {
   background: #ffd000;
   border: none;
-  padding: 16px 18px;
+  padding: 16px;
   border-radius: 18px;
   cursor: pointer;
   font-weight: bold;
@@ -60,9 +55,10 @@ button {
   font-size: 24px;
 }
 
+/* INPUT */
 input {
   width: 900px;
-  margin-top: 12px;
+  margin-top: 10px;
   padding: 18px;
   border-radius: 16px;
   border: none;
@@ -70,21 +66,19 @@ input {
   box-sizing: border-box;
 }
 
-/* TAREAS GRANDES DE VERDAD */
+/* TAREAS */
 .task {
   width: 920px;
-  min-height: 96px;
-  box-sizing: border-box;
+  min-height: 100px;
 
   background: #ffd000;
-  margin-top: 22px;
-  padding: 24px 30px;
+  margin-top: 20px;
+  padding: 26px 30px;
 
-  border-radius: 34px;
+  border-radius: 36px;
 
-  font-size: 42px;
+  font-size: 44px;
   font-weight: 800;
-  line-height: 1.15;
 
   display: flex;
   align-items: center;
@@ -96,113 +90,103 @@ input {
   transition: all 0.45s ease;
 }
 
-/* estrella con tu imagen */
+/* ICONO */
 .task::before {
   content: "";
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  margin-right: 16px;
+  width: 46px;
+  height: 46px;
+  margin-right: 18px;
+
   background-image: url("estrella.png");
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
 }
 
-/* escalonado */
+/* ESCALONADO */
 .task.level-0 {
   opacity: 1;
   transform: scale(1);
 }
 
 .task.level-1 {
-  opacity: 0.78;
-  transform: scale(0.93);
+  opacity: 0.75;
+  transform: scale(0.92);
 }
 
 .task.level-2 {
-  opacity: 0.58;
-  transform: scale(0.86);
+  opacity: 0.55;
+  transform: scale(0.85);
 }
 
+/* COMPLETAR */
 .task.done {
   opacity: 0;
-  transform: translateX(340px);
+  transform: translateX(400px);
 }
 
+/* SUBIDA */
 .task.move-up {
-  transform: translateY(-48px);
+  transform: translateY(-50px);
 }
 
-.hidden {
-  display: none;
-}
 </style>
 </head>
 
 <body>
 
 <div id="app">
-  <button id="modoBtn" onclick="toggleModo()">Modo Overlay</button>
 
+  <!-- PANEL QUE SOLO APARECE CON MOUSE -->
   <div id="setup">
     <div>
       <button onclick="crearInputs(1)">1</button>
       <button onclick="crearInputs(2)">2</button>
       <button onclick="crearInputs(3)">3</button>
     </div>
+
     <div id="inputs"></div>
   </div>
 
+  <!-- TAREAS SIEMPRE VISIBLES -->
   <div id="tasks"></div>
+
 </div>
 
 <script>
+
 let tareas = [];
-let modoOverlay = false;
 
-function toggleModo() {
-  modoOverlay = !modoOverlay;
-
-  const setup = document.getElementById("setup");
-  const btn = document.getElementById("modoBtn");
-
-  if (modoOverlay) {
-    setup.classList.add("hidden");
-    btn.textContent = "Modo Edición";
-  } else {
-    setup.classList.remove("hidden");
-    btn.textContent = "Modo Overlay";
-  }
-}
-
+/* INPUTS */
 function crearInputs(num) {
   const cont = document.getElementById("inputs");
   cont.innerHTML = "";
 
   for (let i = 0; i < num; i++) {
-    cont.innerHTML += `<input placeholder="Tarea ${i + 1}" id="t${i}">`;
+    cont.innerHTML += `<input placeholder="Tarea ${i+1}" id="t${i}">`;
   }
 
   cont.innerHTML += `<button onclick="crearTareas(${num})">Crear</button>`;
 }
 
+/* CREAR */
 function crearTareas(num) {
   tareas = [];
 
   for (let i = 0; i < num; i++) {
-    const texto = document.getElementById("t" + i).value;
+    const texto = document.getElementById("t"+i).value;
     if (texto.trim() !== "") tareas.push(texto);
   }
 
   render();
 }
 
+/* RENDER */
 function render() {
   const tasksDiv = document.getElementById("tasks");
   tasksDiv.innerHTML = "";
 
   tareas.forEach((t, i) => {
+
     let level = "level-0";
     if (i === 1) level = "level-1";
     if (i === 2) level = "level-2";
@@ -210,11 +194,14 @@ function render() {
     const div = document.createElement("div");
     div.className = `task ${level}`;
     div.textContent = t;
+
     div.onclick = () => completar(i, div);
+
     tasksDiv.appendChild(div);
   });
 }
 
+/* COMPLETAR */
 function completar(index, elemento) {
   elemento.classList.add("done");
 
@@ -225,6 +212,7 @@ function completar(index, elemento) {
   }, 450);
 }
 
+/* ANIMACIÓN */
 function animarSubida() {
   const items = document.querySelectorAll(".task");
 
@@ -233,6 +221,7 @@ function animarSubida() {
     setTimeout(() => el.classList.remove("move-up"), 320);
   });
 }
+
 </script>
 
 </body>
