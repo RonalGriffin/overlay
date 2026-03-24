@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Overlay Tasks</title>
+<title>Overlay Tasks PRO</title>
 
 <style>
 body {
@@ -12,11 +12,40 @@ body {
   overflow: hidden;
 }
 
+/* WRAPPER */
+#wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* APP BASE */
 #app {
+  width: 400px;
   position: absolute;
-  top: 50px;
-  left: 50px;
-  width: 300px;
+  top: 10%;
+  left: 5%;
+  transform-origin: top left;
+}
+
+/* BOTÓN OCULTO */
+#modoBtn {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+}
+
+#wrapper:hover #modoBtn {
+  opacity: 1;
+}
+
+/* CONFIG */
+#setup {
+  margin-bottom: 10px;
 }
 
 /* BOTONES */
@@ -24,43 +53,63 @@ button {
   background: #ffd000;
   border: none;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 5px;
+  margin: 5px 5px 0 0;
 }
 
-/* INPUTS */
+/* INPUT */
 input {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 8px;
   padding: 10px;
   border-radius: 10px;
   border: none;
 }
 
-/* TAREAS */
+/* TAREAS BASE */
 .task {
   background: #ffd000;
   margin-top: 10px;
-  padding: 12px;
-  border-radius: 15px;
+  padding: 14px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   transition: all 0.4s ease;
 }
 
+/* ESCALONADO VISUAL */
+.task.level-0 {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.task.level-1 {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
+.task.level-2 {
+  opacity: 0.5;
+  transform: scale(0.9);
+}
+
+/* COMPLETAR */
 .task.done {
   opacity: 0;
-  transform: translateX(100px);
+  transform: translateX(150px) scale(0.9);
 }
 
+/* ANIMACIÓN SUBIDA */
 .task.move-up {
-  transform: translateY(-20px);
+  transform: translateY(-25px);
 }
 
-/* OCULTAR SETUP */
+/* OCULTO */
 .hidden {
   display: none;
 }
@@ -69,25 +118,24 @@ input {
 
 <body>
 
-<div id="app">
+<div id="wrapper">
+  <div id="app">
 
-  <!-- BOTÓN MODO -->
-  <button onclick="toggleModo()" id="modoBtn">Modo Overlay</button>
+    <button id="modoBtn" onclick="toggleModo()">Modo Overlay</button>
 
-  <!-- CONFIG -->
-  <div id="setup">
-    <div id="selector">
-      <button onclick="crearInputs(1)">1</button>
-      <button onclick="crearInputs(2)">2</button>
-      <button onclick="crearInputs(3)">3</button>
+    <div id="setup">
+      <div>
+        <button onclick="crearInputs(1)">1</button>
+        <button onclick="crearInputs(2)">2</button>
+        <button onclick="crearInputs(3)">3</button>
+      </div>
+
+      <div id="inputs"></div>
     </div>
 
-    <div id="inputs"></div>
+    <div id="tasks"></div>
+
   </div>
-
-  <!-- TAREAS -->
-  <div id="tasks"></div>
-
 </div>
 
 <script>
@@ -95,6 +143,7 @@ input {
 let tareas = [];
 let modoOverlay = false;
 
+/* MODO */
 function toggleModo() {
   modoOverlay = !modoOverlay;
 
@@ -110,6 +159,7 @@ function toggleModo() {
   }
 }
 
+/* INPUTS */
 function crearInputs(num) {
   const cont = document.getElementById("inputs");
   cont.innerHTML = "";
@@ -121,28 +171,32 @@ function crearInputs(num) {
   cont.innerHTML += `<button onclick="crearTareas(${num})">Crear</button>`;
 }
 
+/* CREAR */
 function crearTareas(num) {
   tareas = [];
-  const tasksDiv = document.getElementById("tasks");
-  tasksDiv.innerHTML = "";
 
   for (let i = 0; i < num; i++) {
     const texto = document.getElementById("t"+i).value;
     if (texto.trim() === "") continue;
-
     tareas.push(texto);
   }
 
   render();
 }
 
+/* RENDER CON ESCALONADO */
 function render() {
   const tasksDiv = document.getElementById("tasks");
   tasksDiv.innerHTML = "";
 
   tareas.forEach((t, i) => {
+
+    let level = "level-0";
+    if (i === 1) level = "level-1";
+    if (i === 2) level = "level-2";
+
     const div = document.createElement("div");
-    div.className = "task";
+    div.className = `task ${level}`;
     div.innerHTML = `✔ ${t}`;
 
     div.onclick = () => completar(i, div);
@@ -151,6 +205,7 @@ function render() {
   });
 }
 
+/* COMPLETAR */
 function completar(index, elemento) {
   elemento.classList.add("done");
 
@@ -161,6 +216,7 @@ function completar(index, elemento) {
   }, 400);
 }
 
+/* ANIMACIÓN */
 function animarSubida() {
   const items = document.querySelectorAll(".task");
 
@@ -169,6 +225,18 @@ function animarSubida() {
     setTimeout(() => el.classList.remove("move-up"), 300);
   });
 }
+
+/* RESPONSIVE */
+function escalar() {
+  const baseWidth = 400;
+  const scale = window.innerWidth / baseWidth;
+
+  const app = document.getElementById("app");
+  app.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener("resize", escalar);
+window.addEventListener("load", escalar);
 
 </script>
 
