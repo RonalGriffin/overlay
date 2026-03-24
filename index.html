@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Overlay Tasks</title>
+
+<style>
+body {
+  margin: 0;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+#app {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 300px;
+}
+
+/* BOTONES */
+button {
+  background: #ffd000;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* INPUTS */
+input {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+/* TAREAS */
+.task {
+  background: #ffd000;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s ease;
+}
+
+.task.done {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.task.move-up {
+  transform: translateY(-20px);
+}
+
+/* OCULTAR SETUP */
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- BOTÓN MODO -->
+  <button onclick="toggleModo()" id="modoBtn">Modo Overlay</button>
+
+  <!-- CONFIG -->
+  <div id="setup">
+    <div id="selector">
+      <button onclick="crearInputs(1)">1</button>
+      <button onclick="crearInputs(2)">2</button>
+      <button onclick="crearInputs(3)">3</button>
+    </div>
+
+    <div id="inputs"></div>
+  </div>
+
+  <!-- TAREAS -->
+  <div id="tasks"></div>
+
+</div>
+
+<script>
+
+let tareas = [];
+let modoOverlay = false;
+
+function toggleModo() {
+  modoOverlay = !modoOverlay;
+
+  const setup = document.getElementById("setup");
+  const btn = document.getElementById("modoBtn");
+
+  if (modoOverlay) {
+    setup.classList.add("hidden");
+    btn.textContent = "Modo Edición";
+  } else {
+    setup.classList.remove("hidden");
+    btn.textContent = "Modo Overlay";
+  }
+}
+
+function crearInputs(num) {
+  const cont = document.getElementById("inputs");
+  cont.innerHTML = "";
+
+  for (let i = 0; i < num; i++) {
+    cont.innerHTML += `<input placeholder="Tarea ${i+1}" id="t${i}">`;
+  }
+
+  cont.innerHTML += `<button onclick="crearTareas(${num})">Crear</button>`;
+}
+
+function crearTareas(num) {
+  tareas = [];
+  const tasksDiv = document.getElementById("tasks");
+  tasksDiv.innerHTML = "";
+
+  for (let i = 0; i < num; i++) {
+    const texto = document.getElementById("t"+i).value;
+    if (texto.trim() === "") continue;
+
+    tareas.push(texto);
+  }
+
+  render();
+}
+
+function render() {
+  const tasksDiv = document.getElementById("tasks");
+  tasksDiv.innerHTML = "";
+
+  tareas.forEach((t, i) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `✔ ${t}`;
+
+    div.onclick = () => completar(i, div);
+
+    tasksDiv.appendChild(div);
+  });
+}
+
+function completar(index, elemento) {
+  elemento.classList.add("done");
+
+  setTimeout(() => {
+    tareas.splice(index, 1);
+    animarSubida();
+    render();
+  }, 400);
+}
+
+function animarSubida() {
+  const items = document.querySelectorAll(".task");
+
+  items.forEach(el => {
+    el.classList.add("move-up");
+    setTimeout(() => el.classList.remove("move-up"), 300);
+  });
+}
+
+</script>
+
+</body>
+</html>
